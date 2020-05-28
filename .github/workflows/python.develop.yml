@@ -70,7 +70,7 @@ jobs:
         uses: actions/upload-artifact@v1
         with:
           name: project-artifact
-          path: ./$PROJECT_NAME
+          path: ./email_microservice
 
       - name: Upload requirements artifact
         uses: actions/upload-artifact@v1
@@ -92,7 +92,7 @@ jobs:
         uses: actions/download-artifact@v1
         with:
           name: project-artifact
-          path: ./$PROJECT_NAME
+          path: ./email_microservice
 
       - name: Download requirements artifact
         uses: actions/download-artifact@v1
