@@ -52,3 +52,7 @@ jobs:
     runs-on: ubuntu-18.04
     steps:
       - name: Download scripts artifact
+        uses: actions/download-artifact@v1
+        with:
+          name: scripts-artifact
+          path: ./scripts
