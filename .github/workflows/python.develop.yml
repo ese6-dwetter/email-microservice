@@ -1,8 +1,8 @@
-name: Python push on feature branch
+name: Python push on develop branch
 
 on:
   push:
-    branches: [feature/*]
+    branches: [develop]
 
 jobs:
   build:
@@ -28,3 +28,27 @@ jobs:
       - name: Test with pytest
         run: |
           pytest
+      
+      - name: Upload scripts artifact
+        uses: actions/upload-artifact@v1
+        with:
+          name: scripts-artifact
+          path: ./scripts
+      
+      - name: Upload templates artifact
+        uses: actions/upload-artifact@v1
+        with:
+          name: templates-artifact
+          path: ./templates
+
+      - name: Upload Dockerfile artifact
+        uses: actions/upload-artifact@v1
+        with:
+          name: dockerfile-artifact
+          path: ./Dockerfile
+
+  deliver:
+    needs: build
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Download scripts artifact
