@@ -1,4 +1,5 @@
 import json
+import logging
 import os
 import pika
 
@@ -38,10 +39,11 @@ def setup_amqp_connection(exchange, queue):
 
 
 def callback(ch, method, properties, body):
-    print("Method: {}".format(method))
-    print("Properties: {}".format(properties))
+    logging.info("[*] A new message is received")
+    logging.info("Method: {}".format(method))
+    logging.info("Properties: {}".format(properties))
     data = eval(json.loads(body))
-    print("Body: {}".format(data))
+    logging.info("Body: {}".format(data))
 
     # Send the corresponding email of the MessageType header
     message_type = properties.headers['MessageType']
@@ -49,6 +51,8 @@ def callback(ch, method, properties, body):
         send_welcome_mail(data['Email'], data['Username'])
     elif message_type == "VerifyEmail":
         send_verification_mail(data['Email'], data['Username'])
+    else:
+        logging.warning("[*] The MessageType header '{}' does not exist.".format(message_type))
 
 
 def start_consumer(exchange, queue):
@@ -66,5 +70,5 @@ def start_consumer(exchange, queue):
         auto_ack=True
     )
 
-    print("[*] Start consuming...")
+    logging.info("[*] Start consuming...")
     channel.start_consuming()
