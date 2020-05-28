@@ -2,6 +2,10 @@ FROM python:3.8-alpine
 
 WORKDIR /app
 
-COPY /scripts ./
+COPY /requirements.txt ./
 
-ENTRYPOINT [ "python", "consumer.py" ]
+RUN pip install -r ./requirements.txt
+
+COPY /email_microservice ./
+
+ENTRYPOINT [ "python", "-m", "email_microservice" ]
