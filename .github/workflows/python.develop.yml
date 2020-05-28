@@ -65,7 +65,7 @@ jobs:
         with:
           name: pytest-results-artifact
           path: junit/test-results.xml
-      
+
       - name: Upload project artifact
         uses: actions/upload-artifact@v1
         with:
