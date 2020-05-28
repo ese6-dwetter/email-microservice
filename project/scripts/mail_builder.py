@@ -7,14 +7,14 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
 
-def read_template(filename) -> Template:
+def read_template(filename):
     """
     Read template mail file
     :param filename: the HTML filename to read
     :return: Template file
     """
 
-    with open(filename, 'r', encoding='utf-8') as template_file:
+    with open(file=filename, mode='r', encoding='utf-8') as template_file:
         template_file_content = template_file.read()
 
     return Template(template_file_content)
@@ -59,9 +59,9 @@ def setup_mime_multipart(to_address, subject) -> MIMEMultipart:
 
     message = MIMEMultipart()
 
-    message["From"] = os.getenv("FROM_ADDRESS")
-    message["To"] = to_address
-    message["Subject"] = subject
+    message['From'] = os.getenv("FROM_ADDRESS")
+    message['To'] = to_address
+    message['Subject'] = subject
 
     return message
 
@@ -71,7 +71,7 @@ def send_welcome_mail(to_address, username):
     message = setup_mime_multipart(to_address, "Welcome to Dwetter")
 
     # Read HTML template
-    template = read_template("templates/welcome.html")
+    template = read_template("../templates/welcome.html")
 
     # Substitute variables in HTML
     mime_text = MIMEText(template.substitute(USERNAME=username), "html")
@@ -85,7 +85,7 @@ def send_verification_mail(to_address, username):
     message = setup_mime_multipart(to_address, "Verify your email")
 
     # Read HTML template
-    template = read_template("templates/verification.html")
+    template = read_template("../templates/verification.html")
 
     # Substitute variables in HTML
     mime_text = MIMEText(template.substitute(USERNAME=username), "html")

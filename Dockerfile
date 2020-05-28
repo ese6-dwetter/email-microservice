@@ -1,11 +1,11 @@
 FROM python:3.8-alpine
 
-WORKDIR /usr/src/app
+WORKDIR /app
 
-COPY requirements.txt ./
+COPY requirements.txt /
 
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r /requirements.txt
 
-COPY email_microservice/ ./email_microservice/
+COPY project/ /project/
 
-ENTRYPOINT [ "python", "-m", "email_microservice" ]
+ENTRYPOINT [ "python", "/project/scripts/app.py" ]
