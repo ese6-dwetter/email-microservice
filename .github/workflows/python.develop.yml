@@ -4,6 +4,10 @@ on:
   push:
     branches: [develop]
 
+env:
+  DOCKER_IMAGE: ${{ secrets.DOCKER_ORGANIZATION }}/${{ secrets.DOCKER_REPOSITORY }}:${{ github.sha }}
+  DOCKER_IMAGE_DEVELOP: ${{ secrets.DOCKER_ORGANIZATION }}/${{ secrets.DOCKER_REPOSITORY }}:develop
+
 jobs:
   build:
     runs-on: ubuntu-18.04
@@ -20,26 +24,41 @@ jobs:
       
       - name: Lint with flake8
         run: |
-          # stop the build if there are Python syntax errors or undefined names
-          flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-          # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
-          flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+          # Stop the build if there are Python syntax errors or undefined names.
+          flake8 . \
+            --count \
+            --select=E9,F63,F7,F82 \
+            --show-source \
+            --statistics
+          
+          # --exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide.
+          flake8 . \
+            --count \
+            --exit-zero \
+            --max-complexity=10 \
+            --max-line-length=127 \
+            --statistics
       
-      - name: Test with pytest
+      - name: Test with pytest and pytest-cov
         run: |
-          pytest
+          pytest tests/tests.py \
+            --doctest-modules \
+            --junitxml=junit/test-results.xml \
+            --cov=com \
+            --cov-report=xml \
+            --cov-report=html
+
+      - name: Upload pytest results artifact
+        uses: actions/upload-artifact@v1
+        with:
+          name: pytest-results-artifact
+          path: junit/test-results.xml
       
       - name: Upload scripts artifact
         uses: actions/upload-artifact@v1
         with:
           name: scripts-artifact
           path: ./scripts
-      
-      - name: Upload templates artifact
-        uses: actions/upload-artifact@v1
-        with:
-          name: templates-artifact
-          path: ./templates
 
       - name: Upload Dockerfile artifact
         uses: actions/upload-artifact@v1
@@ -56,3 +75,16 @@ jobs:
         with:
           name: scripts-artifact
           path: ./scripts
+
+      - name: Download Dockerfile artifact
+        uses: actions/download-artifact@v1
+        with:
+          name: dockerfile-artifact
+          path: .
+
+      - name: Deliver Docker image
+        run: |
+          docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_ACCESS_TOKEN }}
+          docker build -t $DOCKER_IMAGE -t $DOCKER_IMAGE_DEVELOP .
+          docker push $DOCKER_IMAGE
+          docker push $DOCKER_IMAGE_DEVELOP
