@@ -3,7 +3,6 @@ import os
 import smtplib
 import ssl
 
-from pathlib import Path
 from string import Template
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
@@ -15,6 +14,7 @@ def read_template(filename):
     :param filename: the HTML filename to read
     :return: Template file
     """
+
     filename = os.path.join(os.path.dirname(__file__), filename)
 
     with open(file=filename, mode='r', encoding='utf-8') as template_file:
@@ -49,6 +49,7 @@ def send_message_via_smtp(to_address, message) -> None:
     with setup_smtp_server() as server:
         from_address = os.getenv("FROM_ADDRESS")
         server.sendmail(from_address, to_address, message.as_string())
+
         logging.info("[*] The mail for {} has been send to the SMTP server.".format(to_address))
 
 
@@ -88,7 +89,7 @@ def send_verification_mail(to_address, username):
     message = setup_mime_multipart(to_address, "Verify your email")
 
     # Read HTML template
-    template = read_template("templates/verification.html")
+    template = read_template("../templates/verification.html")
 
     # Substitute variables in HTML
     mime_text = MIMEText(template.substitute(USERNAME=username), "html")
