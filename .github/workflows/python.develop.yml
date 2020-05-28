@@ -15,6 +15,9 @@ jobs:
       image: python:3.8-alpine
     steps:
       - uses: actions/checkout@v2
+
+      - name: Decrypt the GPG encrypted config files
+        run: gpg --quiet --batch --yes --passphrase ${{ secrets.GPG_PASSPHRASE }}  --output ./.env --decrypt ./develop.env.gpg
       
       - name: Install dependencies
         run: |
