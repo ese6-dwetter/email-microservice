@@ -5,6 +5,7 @@ on:
     branches: [develop]
 
 env:
+  PROJECT_NAME: email_microservice
   DOCKER_IMAGE: ${{ secrets.DOCKER_ORGANIZATION }}/${{ secrets.DOCKER_REPOSITORY }}:${{ github.sha }}
   DOCKER_IMAGE_DEVELOP: ${{ secrets.DOCKER_ORGANIZATION }}/${{ secrets.DOCKER_REPOSITORY }}:develop
 
@@ -19,7 +20,10 @@ jobs:
       - name: Decrypt the GPG encrypted config files
         run: |
           apk add --no-cache gnupg
-          gpg --quiet --batch --yes --passphrase ${{ secrets.GPG_PASSPHRASE }}  --output ./email_microservice/.env --decrypt ./email_microservice/develop.env.gpg
+          gpg --quiet --batch --yes --passphrase \
+            ${{ secrets.GPG_PASSPHRASE }} \
+            --output ./$PROJECT_NAME/.env \
+            --decrypt ./$PROJECT_NAME/develop.env.gpg
 
       - name: Install dependencies
         run: |
@@ -49,7 +53,7 @@ jobs:
       
       - name: Test with pytest and pytest-cov
         run: |
-          pytest tests/tests.py \
+          pytest $PROJECT_NAME/tests/tests.py \
             --doctest-modules \
             --junitxml=junit/test-results.xml \
             --cov=com \
