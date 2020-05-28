@@ -2,7 +2,6 @@ import os
 import smtplib
 import ssl
 
-from dotenv import load_dotenv
 from string import Template
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
@@ -47,7 +46,7 @@ def send_message_via_smtp(to_address, message) -> None:
     with setup_smtp_server() as server:
         from_address = os.getenv("FROM_ADDRESS")
         server.sendmail(from_address, to_address, message.as_string())
-        print("The mail has been send to the SMTP server.")
+        print("[*] The mail has been send to the SMTP server.")
 
 
 def setup_mime_multipart(to_address, subject) -> MIMEMultipart:
@@ -57,9 +56,6 @@ def setup_mime_multipart(to_address, subject) -> MIMEMultipart:
     :param subject: The subject of the mail
     :return: MIMEMultipart
     """
-
-    # Load .env file
-    load_dotenv()
 
     message = MIMEMultipart()
 
