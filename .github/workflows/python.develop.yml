@@ -82,6 +82,11 @@ jobs:
         with:
           name: dockerfile-artifact
           path: ./Dockerfile
+      - name: Upload Kubernetes artifact
+        uses: actions/upload-artifact@v1
+        with:
+          name: kubernetes-artifact
+          path: ./kube_develop
 
   deliver:
     needs: build
@@ -111,3 +116,33 @@ jobs:
           docker build -t $DOCKER_IMAGE -t $DOCKER_IMAGE_DEVELOP .
           docker push $DOCKER_IMAGE
           docker push $DOCKER_IMAGE_DEVELOP
+
+  deploy:
+    needs: deliver
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Download Kubernetes artifact
+        uses: actions/download-artifact@v1
+        with:
+            name: kubernetes-artifact
+            path: ./kube_develop
+      
+      - name: Setup Kubectl
+        uses: azure/setup-kubectl@v1
+
+      - name: Set context via kubeconfig
+        uses: azure/k8s-set-context@v1
+        with:
+          method: kubeconfig
+          kubeconfig: ${{ secrets.KUBE_CONFIG }}
+      
+      - name: Deploy Kubernetes with manifests
+        uses: azure/k8s-deploy@v1
+        with:
+            namespace: dwetter-develop
+            manifests: |
+              ./kube_develop/autoscaler.yaml
+              ./kube_develop/deployment.yaml
+              ./kube_develop/service.yaml
+            images: |
+              ${{ secrets.DOCKER_ORGANIZATION }}/${{ secrets.DOCKER_REPOSITORY }}:${{ github.sha }}
