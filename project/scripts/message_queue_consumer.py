@@ -2,11 +2,13 @@ import json
 import os
 import pika
 
-from email_microservice.scripts.mail_builder import (
+# Make sure null = None, true = True and false = False
+from project.scripts.python_json import *
+
+from project.scripts.mail_builder import (
     send_welcome_mail,
     send_verification_mail,
 )
-from email_microservice.scripts.python_json import *
 
 
 def setup_amqp_connection(exchange, queue):
