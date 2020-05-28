@@ -19,7 +19,7 @@ jobs:
       - name: Decrypt the GPG encrypted config files
         run: |
           apk add --no-cache gnupg
-          gpg --quiet --batch --yes --passphrase ${{ secrets.GPG_PASSPHRASE }}  --output ./.env --decrypt ./develop.env.gpg
+          gpg --quiet --batch --yes --passphrase ${{ secrets.GPG_PASSPHRASE }}  --output ./email_microservice/.env --decrypt ./email_microservice/develop.env.gpg
 
       - name: Install dependencies
         run: |
@@ -62,11 +62,17 @@ jobs:
           name: pytest-results-artifact
           path: junit/test-results.xml
       
-      - name: Upload scripts artifact
+      - name: Upload project artifact
         uses: actions/upload-artifact@v1
         with:
-          name: scripts-artifact
-          path: ./scripts
+          name: project-artifact
+          path: ./email_microservice
+
+      - name: Upload requirements artifact
+        uses: actions/upload-artifact@v1
+        with:
+          name: requirements-artifact
+          path: ./requirements.txt
 
       - name: Upload Dockerfile artifact
         uses: actions/upload-artifact@v1
@@ -78,11 +84,17 @@ jobs:
     needs: build
     runs-on: ubuntu-18.04
     steps:
-      - name: Download scripts artifact
+      - name: Download project artifact
         uses: actions/download-artifact@v1
         with:
-          name: scripts-artifact
-          path: ./scripts
+          name: project-artifact
+          path: ./email_microservice
+
+      - name: Download requirements artifact
+        uses: actions/download-artifact@v1
+        with:
+          name: requirements-artifact
+          path: .
 
       - name: Download Dockerfile artifact
         uses: actions/download-artifact@v1
