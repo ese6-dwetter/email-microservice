@@ -5,7 +5,6 @@ on:
     branches: [develop]
 
 env:
-  PROJECT_NAME: email_microservice
   DOCKER_IMAGE: ${{ secrets.DOCKER_ORGANIZATION }}/${{ secrets.DOCKER_REPOSITORY }}:${{ github.sha }}
   DOCKER_IMAGE_DEVELOP: ${{ secrets.DOCKER_ORGANIZATION }}/${{ secrets.DOCKER_REPOSITORY }}:develop
 
