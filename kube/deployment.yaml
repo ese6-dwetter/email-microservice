@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: email-microservice
+  namespace: dwetter
+  labels:
+    app: email-microservice
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: email-microservice
+  template:
+    metadata:
+      labels:
+        app: email-microservice
+    spec:
+      containers:
+        - name: email-microservice
+          image: ese6dwetter/email-microservice
+          imagePullPolicy: IfNotPresent
+          ports: 
+            - containerPort: 80
+          resources:
+            limits:
+              cpu: 100m
+              memory: 128Mi
+            requests:
+              cpu: 50m
+              memory: 64Mi

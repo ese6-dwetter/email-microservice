@@ -2,7 +2,7 @@ apiVersion: autoscaling/v1
 kind: HorizontalPodAutoscaler
 metadata:
   name: email-microservice
-  namespace: dwetter-develop
+  namespace: dwetter
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
