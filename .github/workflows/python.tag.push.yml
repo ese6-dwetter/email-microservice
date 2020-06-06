@@ -150,7 +150,7 @@ jobs:
       - name: Deploy Kubernetes with manifests
         uses: azure/k8s-deploy@v1
         with:
-            namespace: ${{ env.PROJECT_NAME }}
+            namespace: ${{ env.KUBERNETES_NAMESPACE }}
             manifests: |
               ./kube/autoscaler.yaml
               ./kube/deployment.yaml
