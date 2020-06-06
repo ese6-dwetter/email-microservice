@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: email-microservice
+  namespace: dwetter
+spec:
+  selector:
+    app: email-microservice
+  ports:
+    - port: 80
+      targetPort: 80
