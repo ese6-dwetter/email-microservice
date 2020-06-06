@@ -5,8 +5,10 @@ on:
     branches: [develop]
 
 env:
-  DOCKER_IMAGE: ${{ secrets.DOCKER_ORGANIZATION }}/${{ secrets.DOCKER_REPOSITORY }}:${{ github.sha }}
-  DOCKER_IMAGE_DEVELOP: ${{ secrets.DOCKER_ORGANIZATION }}/${{ secrets.DOCKER_REPOSITORY }}:develop
+  PROJECT_NAME: email_microservice
+  DOCKER_ORGANIZATION: ese6dwetter
+  DOCKER_REPOSITORY: email-microservice
+  KUBERNETES_NAMESPACE: dwetter-develop
 
 jobs:
   build:
@@ -21,8 +23,8 @@ jobs:
           apk add --no-cache gnupg
           gpg --quiet --batch --yes --passphrase \
             ${{ secrets.GPG_PASSPHRASE }} \
-            --output ./project/.env \
-            --decrypt ./project/develop.env.gpg
+            --output ./${{ env.PROJECT_NAME }}/.env \
+            --decrypt ./${{ env.PROJECT_NAME }}/develop.env.gpg
 
       - name: Install dependencies
         run: |
@@ -52,7 +54,7 @@ jobs:
       
       - name: Test with pytest and pytest-cov
         run: |
-          pytest project/tests/tests.py \
+          pytest ${{ env.PROJECT_NAME }}/tests/tests.py \
             --doctest-modules \
             --junitxml=junit/test-results.xml \
             --cov=com \
@@ -69,7 +71,7 @@ jobs:
         uses: actions/upload-artifact@v1
         with:
           name: project-artifact
-          path: ./project
+          path: ./${{ env.PROJECT_NAME }}
 
       - name: Upload requirements artifact
         uses: actions/upload-artifact@v1
@@ -82,6 +84,7 @@ jobs:
         with:
           name: dockerfile-artifact
           path: ./Dockerfile
+
       - name: Upload Kubernetes artifact
         uses: actions/upload-artifact@v1
         with:
@@ -96,7 +99,7 @@ jobs:
         uses: actions/download-artifact@v1
         with:
           name: project-artifact
-          path: ./project
+          path: ./${{ env.PROJECT_NAME }}
 
       - name: Download requirements artifact
         uses: actions/download-artifact@v1
@@ -113,9 +116,8 @@ jobs:
       - name: Deliver Docker image
         run: |
           docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_ACCESS_TOKEN }}
-          docker build -t $DOCKER_IMAGE -t $DOCKER_IMAGE_DEVELOP .
-          docker push $DOCKER_IMAGE
-          docker push $DOCKER_IMAGE_DEVELOP
+          docker build -t ${{ env.DOCKER_ORGANIZATION }}/${{ env.DOCKER_REPOSITORY }}:${{ github.sha }} .
+          docker push ${{ env.DOCKER_ORGANIZATION }}/${{ env.DOCKER_REPOSITORY }}:${{ github.sha }}
 
   deploy:
     needs: deliver
@@ -139,10 +141,10 @@ jobs:
       - name: Deploy Kubernetes with manifests
         uses: azure/k8s-deploy@v1
         with:
-            namespace: dwetter-develop
+            namespace: ${{ env.PROJECT_NAME }}
             manifests: |
               ./kube_develop/autoscaler.yaml
               ./kube_develop/deployment.yaml
               ./kube_develop/service.yaml
             images: |
-              ${{ secrets.DOCKER_ORGANIZATION }}/${{ secrets.DOCKER_REPOSITORY }}:${{ github.sha }}
+              ${{ env.DOCKER_ORGANIZATION }}/${{ env.DOCKER_REPOSITORY }}:${{ github.sha }}
