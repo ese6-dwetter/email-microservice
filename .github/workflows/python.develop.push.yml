@@ -11,10 +11,8 @@ env:
   KUBERNETES_NAMESPACE: dwetter-develop
 
 jobs:
-  build:
+  sonarcloud-scan:
     runs-on: ubuntu-18.04
-    container:
-      image: python:3.8-alpine
     steps:
       - uses: actions/checkout@v2
         with:
@@ -27,6 +25,23 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+  build:
+    runs-on: ubuntu-18.04
+    container:
+      image: python:3.8-alpine
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Decrypt the GPG encrypted config files
+        run: |
+          apk add --no-cache gnupg
+          gpg --quiet --batch --yes --passphrase \
+            ${{ secrets.GPG_PASSPHRASE }} \
+            --output ./${{ env.PROJECT_NAME }}/.env \
+            --decrypt ./${{ env.PROJECT_NAME }}/develop.env.gpg
       
       - name: Install dependencies
         run: |
@@ -94,7 +109,7 @@ jobs:
           path: ./kube_develop
 
   deliver:
-    needs: build
+    needs: [sonarcloud-scan, build]
     runs-on: ubuntu-18.04
     steps:
       - name: Download project artifact
