@@ -35,6 +35,14 @@ jobs:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
+
+      - name: Decrypt the GPG encrypted config files
+        run: |
+          apk add --no-cache gnupg
+          gpg --quiet --batch --yes --passphrase \
+            ${{ secrets.GPG_PASSPHRASE }} \
+            --output ./${{ env.PROJECT_NAME }}/.env \
+            --decrypt ./${{ env.PROJECT_NAME }}/.env.gpg
       
       - name: Install dependencies
         run: |
