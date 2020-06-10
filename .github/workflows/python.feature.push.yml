@@ -8,10 +8,8 @@ env:
   PROJECT_NAME: email_microservice
 
 jobs:
-  build:
+  sonarcloud-scan:
     runs-on: ubuntu-18.04
-    container:
-      image: python:3.8-alpine
     steps:
       - uses: actions/checkout@v2
         with:
@@ -24,6 +22,15 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+  build:
+    runs-on: ubuntu-18.04
+    container:
+      image: python:3.8-alpine
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
       
       - name: Install dependencies
         run: |
