@@ -6,6 +6,6 @@ COPY requirements.txt /
 
 RUN pip install --no-cache-dir -r /requirements.txt
 
-COPY project/ ./project/
+COPY email_microservice/ ./email_microservice/
 
-ENTRYPOINT [ "python", "-m", "project" ]
+ENTRYPOINT [ "python", "-m", "email_microservice" ]
