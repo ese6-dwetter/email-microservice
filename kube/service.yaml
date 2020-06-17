@@ -4,9 +4,9 @@ metadata:
   name: email-microservice
   namespace: dwetter
 spec:
-  selector:
-    app: email-microservice
   ports:
     - port: 80
       targetPort: 80
+  selector:
+    app: email-microservice
   type: ClusterIP
