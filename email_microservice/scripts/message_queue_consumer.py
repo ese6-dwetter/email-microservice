@@ -3,9 +3,6 @@ import logging
 import os
 import pika
 
-# Make sure null = None, true = True and false = False
-from email_microservice.scripts.python_json import *
-
 from email_microservice.scripts.mail_builder import (
     send_welcome_mail,
     send_verification_mail,
@@ -47,10 +44,13 @@ def callback(ch, method, properties, body):
 
     # Send the corresponding email of the MessageType header
     message_type = properties.headers['MessageType']
+    email = data['email']
+    username = data['username']
+
     if message_type == "RegisterUser":
-        send_welcome_mail(data['Email'], data['Username'])
+        send_welcome_mail(email, username)
     elif message_type == "VerifyEmail":
-        send_verification_mail(data['Email'], data['Username'])
+        send_verification_mail(email, username)
     else:
         logging.warning("[*] The MessageType header '{}' does not exist.".format(message_type))
 
