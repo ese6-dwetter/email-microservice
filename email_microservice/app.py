@@ -1,7 +1,7 @@
 import logging
 
 from dotenv import load_dotenv
-from project.scripts.message_queue_consumer import start_consumer
+from email_microservice.scripts.message_queue_consumer import start_consumer
 
 
 def run():
