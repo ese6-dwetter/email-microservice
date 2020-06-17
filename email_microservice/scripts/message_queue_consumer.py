@@ -46,6 +46,7 @@ def callback(ch, method, properties, body):
     message_type = properties.headers['MessageType']
     email = data['email']
     username = data['username']
+
     if message_type == "RegisterUser":
         send_welcome_mail(email, username)
     elif message_type == "VerifyEmail":
