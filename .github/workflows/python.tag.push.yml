@@ -1,4 +1,4 @@
-name: Python push on develop branch
+name: Python push on tag
 
 on:
   push:
