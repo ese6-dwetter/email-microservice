@@ -4,9 +4,9 @@ import os
 import pika
 
 # Make sure null = None, true = True and false = False
-from email_microservice.scripts.python_json import *
+from project.scripts.python_json import *
 
-from email_microservice.scripts.mail_builder import (
+from project.scripts.mail_builder import (
     send_welcome_mail,
     send_verification_mail,
 )

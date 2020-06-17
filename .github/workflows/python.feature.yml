@@ -4,33 +4,13 @@ on:
   push:
     branches: [feature/*]
 
-env:
-  PROJECT_NAME: email_microservice
-
 jobs:
-  sonarcloud-scan:
-    runs-on: ubuntu-18.04
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-
-      - name: SonarCloud Scan
-        uses: sonarsource/sonarcloud-github-action@master
-        with:
-          projectBaseDir: .
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-
   build:
     runs-on: ubuntu-18.04
     container:
       image: python:3.8-alpine
     steps:
       - uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
       
       - name: Install dependencies
         run: |
@@ -41,7 +21,7 @@ jobs:
             pytest-cov
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
       
-      - name: Build and lint with flake8
+      - name: Lint with flake8
         run: |
           # Stop the build if there are Python syntax errors or undefined names.
           flake8 . \
@@ -60,7 +40,7 @@ jobs:
       
       - name: Test with pytest and pytest-cov
         run: |
-          pytest ${{ env.PROJECT_NAME }}/tests/tests.py \
+          pytest project/tests/tests.py \
             --doctest-modules \
             --junitxml=junit/test-results.xml \
             --cov=com \
