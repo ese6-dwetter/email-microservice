@@ -79,31 +79,31 @@ jobs:
             --cov-report=html
 
       - name: Upload pytest results artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: pytest-results-artifact
           path: junit/test-results.xml
 
       - name: Upload project artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: project-artifact
           path: ./${{ env.PROJECT_NAME }}
 
       - name: Upload requirements artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: requirements-artifact
           path: ./requirements.txt
 
       - name: Upload Dockerfile artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: dockerfile-artifact
           path: ./Dockerfile
 
       - name: Upload Kubernetes artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: kubernetes-artifact
           path: ./kube_develop
